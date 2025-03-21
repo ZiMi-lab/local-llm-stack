@@ -76,7 +76,6 @@ local-llm-stack/
 │   └── templates/            # Šablony pro Nginx
 ├── backend/
 │   └── Dockerfile            # Definice kontejneru pro backend
-├── rag/                      # Dodatečné zdroje (ignorováno v .gitignore)
 └── uploads_data/             # Úložiště nahraných souborů
 ```
 

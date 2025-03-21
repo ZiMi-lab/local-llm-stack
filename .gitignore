@@ -24,9 +24,12 @@ nginx/ssl/*
 # nginx templates
 nginx/templates/default.conf.template
 
-# Adresář rag
+# Adresář RAG
 rag/
-uploads_data/
+
+# Ignorovat všechno v uploads_data, ale ne .gitkeep
+uploads_data/*
+!uploads_data/.gitkeep
 
 # Ostatní
 *.swp
