@@ -3,7 +3,7 @@
 Tato složka obsahuje zdrojový kód a konfigurační soubory pro **backend** (FastAPI aplikaci), který v tomto projektu zajišťuje:
 
 1. **Zpracování nahraných souborů** a jejich ukládání do cílového adresáře (např. `/uploads`).
-2. **Autorizaci pomocí tokenů** (definovaných v `.env` proměnné `BACKEND_UPLOAD_TOKENS`).
+2. **Autorizaci pomocí tokenů** (definovaných v `.env` proměnné `BACKEND_VALID_TOKENS`).
 
 ## Struktura
 
@@ -13,18 +13,18 @@ Tato složka obsahuje zdrojový kód a konfigurační soubory pro **backend** (F
 
 ## Spuštění v Dockeru
 
-1. Ujistěte se, že máte v hlavním adresáři projektu `.env` s proměnnou `BACKEND_UPLOAD_TOKENS`.
+1. Ujistěte se, že máte v hlavním adresáři projektu `.env` s proměnnou `BACKEND_VALID_TOKENS`.
 2. Spusťte docker-compose (z kořenové složky):
    ```bash
    docker compose up -d
    ```
 3. Kontejner `backend` se sestaví a poběží jako součást stacku.
 
-## Konfigurace tokenů (BACKEND_UPLOAD_TOKENS)
+## Konfigurace tokenů (BACKEND_VALID_TOKENS)
 
-- V `.env` definujte proměnnou `BACKEND_UPLOAD_TOKENS` – například:
+- V `.env` definujte proměnnou `BACKEND_VALID_TOKENS` – například:
   ```
-  BACKEND_UPLOAD_TOKENS="token1, token2"
+  BACKEND_VALID_TOKENS="token1, token2"
   ```
 - Backend při nahrávání souborů vyžaduje, aby uživatel poslal jeden z povolených tokenů (pole `token` ve formuláři).
 - Správný token je kontrolován v `main.py` (pseudokód):

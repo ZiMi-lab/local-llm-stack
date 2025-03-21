@@ -5,11 +5,11 @@ import shutil
 
 app = FastAPI()
 
-# Seznam tokenů se načítá z proměnné prostředí UPLOAD_TOKENS,
+# Seznam tokenů se načítá z proměnné prostředí BACKEND_VALID_TOKENS,
 # kterou si uživatel definuje v .env (odkazy dole).
 #
 # Např. .env může obsahovat:
-#   UPLOAD_TOKENS="asdjklhasdkjhasd==, asdasdkjyhasdkjh=="
+#   BACKEND_VALID_TOKENS="asdjklhasdkjhasd==, asdasdkjyhasdkjh=="
 #
 # V kódu se tokeny rozdělí podle čárek a uloží do seznamu.
 tokens_str = os.environ.get("BACKEND_VALID_TOKENS", "")
