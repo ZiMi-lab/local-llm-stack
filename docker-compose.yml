@@ -1,0 +1,98 @@
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:cuda
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      - ENV=${ENV:-prod}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-true}
+      - ENABLE_LOGIN_FORM=${ENABLE_LOGIN_FORM:-true}
+      - WEBUI_URL=${WEBUI_URL_SCHEMA:-http}://${WEBUI_URL:-localhost}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+      - RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE=${RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE}
+      - RAG_EMBEDDING_MODEL=${RAG_EMBEDDING_MODEL}
+      - CONTENT_EXTRACTION_ENGINE=${CONTENT_EXTRACTION_ENGINE}
+      - RAG_TOP_K=${RAG_TOP_K}
+      - RAG_RELEVANCE_THRESHOLD=${RAG_RELEVANCE_THRESHOLD}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+      - RAG_FILE_MAX_SIZE=${RAG_FILE_MAX_SIZE}
+      - RAG_RERANKING_MODEL=${RAG_RERANKING_MODEL}
+      - TIKA_SERVER_URL=${TIKA_SERVER_URL}
+      - USE_CUDA_DOCKER=${USE_CUDA_DOCKER}
+      - ENABLE_OAUTH_SIGNUP=${ENABLE_OAUTH_SIGNUP:-false}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET}
+      - MICROSOFT_CLIENT_TENANT_ID=${MICROSOFT_CLIENT_TENANT_ID}
+    restart: unless-stopped
+    networks:
+      main:
+        aliases:
+          - openwebui
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/templates:/etc/nginx/templates:ro
+    environment:
+      - WEBUI_URL=${WEBUI_URL:-localhost}
+    restart: unless-stopped
+    depends_on:
+      - openwebui
+    networks:
+      main:
+        aliases:
+          - nginx
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 3600
+    restart: unless-stopped
+    depends_on:
+      - openwebui
+
+  tika:
+    image: apache/tika:latest
+    restart: unless-stopped
+    depends_on:
+      - openwebui
+    ports:
+      - "9998:9998"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    container_name: backend
+    networks:
+      main:
+        aliases:
+          - backend
+    volumes:
+      - ./uploads_data:/uploads
+
+volumes:
+  open-webui:
+
+networks:
+  main:

@@ -1,0 +1,34 @@
+# Obecné systémové soubory
+.DS_Store
+Thumbs.db
+
+# Vyloučení lokálních konfiguračních souborů
+.env
+.env.*
+!.env.example
+
+# Build a log soubory (podle potřeby)
+build/
+dist/
+node_modules/
+*.log
+*.tmp
+
+# Docker related
+docker-compose.override.yml
+
+# SSL certifikáty a klíče v nginx
+nginx/ssl/*
+!nginx/ssl/README.md
+
+# nginx templates
+nginx/templates/default.conf.template
+
+# Adresář rag
+rag/
+uploads_data/
+
+# Ostatní
+*.swp
+*.swo
+*.bak
